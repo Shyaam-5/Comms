@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Quiz - English Mastery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='module.css') }}?v=3">
+    <script>
+        // Immediate client-side auth check
+        if (!localStorage.getItem('email') || !localStorage.getItem('session_id')) {
+            window.location.href = '/login';
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Main module container -->
+    <div class="module-container-fullscreen">
+        <div class="content-wrapper">
+            <!-- Module title - top left -->
+            <h1 class="module-title-corner">Grammar Quiz</h1>
+
+            <!-- Main content centered -->
+            <div class="center-content quiz-content">
+                <!-- Question display -->
+                <div class="quiz-question-box">
+                    <span id="questionCategory" class="quiz-category-badge">--</span>
+                    <p class="question-number" id="questionNumber">1.</p>
+                    <p class="question-text" id="questionText">Loading question...</p>
+
+                    <!-- Options -->
+                    <div class="quiz-options" id="quizOptions">
+                        <!-- Options will be dynamically inserted -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation buttons - bottom -->
+            <div class="quiz-nav-buttons">
+                <button id="prevBtn" class="quiz-nav-btn prev-btn" onclick="previousQuestion()" disabled>
+                    Previous Quiz
+                </button>
+                <button id="nextBtn" class="quiz-nav-btn next-btn" onclick="nextQuestion()">
+                    Next Quiz
+                </button>
+            </div>
+
+            <!-- Progress indicator - top right -->
+            <div id="progress-pill" class="progress-indicator" style="display: none;">
+                1/5
+            </div>
+
+            <!-- Results overlay -->
+            <div id="results" class="results-overlay" style="display: none;">
+                <div class="results-modal quiz-results-modal">
+                    <div class="results-header">
+                        <h2>Quiz Complete!</h2>
+                    </div>
+
+                    <div class="score-display-large">
+                        <div class="score-ring">
+                            <span id="finalScore" class="score-value">--</span>
+                            <span class="score-unit">%</span>
+                        </div>
+                        <p class="score-summary">
+                            You got <strong id="correctCount">0</strong> out of <strong id="totalCount">5</strong>
+                            correct
+                        </p>
+                    </div>
+
+                    <div class="feedback-container">
+                        <div class="feedback-item">
+                            <span class="feedback-label">Review:</span>
+                            <div id="reviewContent" class="review-list">
+                                <!-- Review items will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="close-results-btn" onclick="completeQuiz()">Finish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='moduleD.js') }}"></script>
+</body>
+
+</html>

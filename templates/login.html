@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - English Mastery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left decorative panel -->
+        <div class="left-panel">
+            <div class="wave-pattern"></div>
+        </div>
+
+        <!-- Right form panel -->
+        <div class="right-panel">
+            <div class="decorative-circle"></div>
+
+            <div class="form-container">
+                <div class="brand-header">
+                    <h1 class="brand-title">English Mastery</h1>
+                    <p class="brand-subtitle">Listen — Respond — Level-up.</p>
+                </div>
+
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com"
+                            required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-input"
+                            placeholder="Enter your password" required minlength="6" autocomplete="current-password">
+                    </div>
+
+                    <div id="errorMessage" class="error-message"
+                        style="display: none; color: red; margin-bottom: 1rem;"></div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">Login</button>
+                </form>
+
+                <script>
+                    async function handleLogin(event) {
+                        event.preventDefault();
+
+                        const email = document.getElementById('email').value;
+                        const password = document.getElementById('password').value;
+                        const btn = document.getElementById('submitBtn');
+                        const errorDiv = document.getElementById('errorMessage');
+
+                        btn.disabled = true;
+                        btn.textContent = 'Logging in...';
+                        errorDiv.style.display = 'none';
+
+                        try {
+                            const response = await fetch('/login', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ email, password })
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok && data.success) {
+                                // Store credentials locally
+                                localStorage.setItem('email', data.email);
+                                localStorage.setItem('username', data.username);
+                                localStorage.setItem('session_id', data.session_id);
+
+                                // Redirect to home
+                                window.location.href = '/';
+                            } else {
+                                errorDiv.textContent = data.error || 'Login failed. Please try again.';
+                                errorDiv.style.display = 'block';
+                                btn.disabled = false;
+                                btn.textContent = 'Login';
+                            }
+                        } catch (error) {
+                            console.error('Login error:', error);
+                            errorDiv.textContent = 'Network error. Please try again.';
+                            errorDiv.style.display = 'block';
+                            btn.disabled = false;
+                            btn.textContent = 'Login';
+                        }
+                    }
+                </script>
+
+                <p class="alt-action">
+                    Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

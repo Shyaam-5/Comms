@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Report - English Mastery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='module.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}?v=2">
+    <script>
+        // Immediate client-side auth check
+        if (!localStorage.getItem('email') || !localStorage.getItem('session_id')) {
+            window.location.href = '/login';
+        }
+    </script>
+    <style>
+        .loading-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .report-section {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main container with gradient background -->
+    <div class="module-container-fullscreen">
+        <div class="content-wrapper">
+            <!-- Module title - top left -->
+            <h1 class="module-title-corner">Performance Report</h1>
+
+            <!-- Report content centered -->
+            <div class="report-content-center">
+
+                <div id="loading" class="loading-overlay">
+                    Loading report...
+                </div>
+
+                <div id="reportContent" class="report-section">
+                    <!-- Overall Performance Card -->
+                    <div class="report-card overall-performance">
+                        <h2 class="card-title">Overall Performance</h2>
+                        <div class="overall-display">
+                            <div class="large-score-ring">
+                                <span id="overallScore" class="score-value-large">--</span>
+                                <span class="score-percent-large">%</span>
+                            </div>
+                            <p class="completion-text">
+                                <span id="totalQuestions">0</span> questions completed across all modules
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Module Breakdown Card -->
+                    <div class="report-card module-breakdown">
+                        <h2 class="card-title">Module Performance</h2>
+
+                        <div id="modulesList" class="modules-list">
+                            <!-- Modules injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Performance Insight Card -->
+                    <div class="report-card performance-insight" id="insightCard">
+                        <!-- Insight injected via JS -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons-group">
+                        <button class="btn-primary" onclick="location.href='/'">
+                            Start New Session
+                        </button>
+                        <button class="btn-secondary" onclick="window.print()">
+                            Print Report
+                        </button>
+                        <button class="btn-outline" onclick="logout()">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadReport);
+
+        async function loadReport() {
+            const email = localStorage.getItem('email');
+            const sessionId = localStorage.getItem('session_id');
+
+            if (!email) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/report?email=${encodeURIComponent(email)}&session_id=${encodeURIComponent(sessionId || '')}`);
+
+                if (response.status === 401 || response.status === 404) {
+                    console.error('Error fetching report:', response.status);
+                    alert('Could not load report. Please login again.');
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const report = await response.json();
+                renderReport(report);
+            } catch (e) {
+                console.error('Network error:', e);
+                document.getElementById('loading').textContent = 'Error loading report. Please check connection.';
+            }
+        }
+
+        function renderReport(report) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('reportContent').style.display = 'block';
+
+            // Overall
+            document.getElementById('overallScore').textContent = report.overall_score;
+            document.getElementById('totalQuestions').textContent = report.total_questions;
+
+            // Modules
+            const modulesContainer = document.getElementById('modulesList');
+            modulesContainer.innerHTML = '';
+
+            if (report.modules && report.modules.length > 0) {
+                report.modules.forEach(module => {
+                    const div = document.createElement('div');
+                    div.className = 'module-item';
+                    div.innerHTML = `
+                        <div class="module-info">
+                            <h3 class="module-name">${module.name}</h3>
+                            <div class="module-meta">
+                                <span class="question-count">${module.questions_completed} questions</span>
+                                <span class="avg-score">Avg: ${module.average_score}/${module.max_score}</span>
+                            </div>
+                        </div>
+                        <div class="module-score-display">
+                            <div class="score-badge">${module.percentage}%</div>
+                            <div class="progress-bar-wrapper">
+                                <div class="progress-bar-fill" style="width: ${module.percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                    modulesContainer.appendChild(div);
+                });
+            } else {
+                modulesContainer.innerHTML = '<p style="text-align:center; color:#888;">No activity recorded yet.</p>';
+            }
+
+            // Insight
+            const insightCard = document.getElementById('insightCard');
+            const score = report.overall_score;
+            let html = '';
+
+            if (score >= 80) {
+                html = `
+                    <div class="insight-badge excellent">
+                        <span class="badge-emoji">🌟</span>
+                        <span class="badge-title">Excellent Work!</span>
+                    </div>
+                    <p class="insight-message">
+                        Outstanding performance! You've demonstrated strong English language skills. 
+                        Keep practicing to maintain this excellent level.
+                    </p>
+                `;
+            } else if (score >= 60) {
+                html = `
+                    <div class="insight-badge good">
+                        <span class="badge-emoji">👍</span>
+                        <span class="badge-title">Good Progress</span>
+                    </div>
+                    <p class="insight-message">
+                        You're doing well! Focus on the modules where you scored lower 
+                        and practice regularly to enhance your skills further.
+                    </p>
+                `;
+            } else {
+                html = `
+                    <div class="insight-badge improving">
+                        <span class="badge-emoji">💪</span>
+                        <span class="badge-title">Keep Practicing</span>
+                    </div>
+                    <p class="insight-message">
+                        Learning takes time and practice. Review the modules where you struggled 
+                        and try again. Consistent effort will lead to improvement.
+                    </p>
+                `;
+            }
+            insightCard.innerHTML = html;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('email');
+                localStorage.removeItem('username');
+                localStorage.removeItem('session_id');
+                fetch('/logout', { method: 'POST', credentials: 'same-origin' })
+                    .then(() => window.location.href = '/login')
+                    .catch(() => window.location.href = '/login');
+            }
+        }
+    </script>
+</body>
+
+</html>

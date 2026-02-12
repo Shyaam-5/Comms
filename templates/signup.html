@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - English Mastery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left decorative panel -->
+        <div class="left-panel">
+            <div class="wave-pattern"></div>
+        </div>
+
+        <!-- Right form panel -->
+        <div class="right-panel">
+            <div class="decorative-circle"></div>
+
+            <div class="form-container">
+                <div class="brand-header">
+                    <h1 class="brand-title">English Mastery</h1>
+                    <p class="brand-subtitle">Listen — Respond — Level-up.</p>
+                </div>
+
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <form id="signupForm" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com"
+                            required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <input type="text" id="username" name="username" class="form-input" placeholder="Your Name"
+                            required autocomplete="username">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-input"
+                            placeholder="Create a password" required minlength="6" autocomplete="new-password">
+                    </div>
+
+                    <div id="errorMessage" class="error-message"
+                        style="display: none; color: red; margin-bottom: 1rem;"></div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">Start Practice</button>
+                </form>
+
+                <script>
+                    async function handleSignup(event) {
+                        event.preventDefault();
+
+                        const email = document.getElementById('email').value;
+                        const username = document.getElementById('username').value;
+                        const password = document.getElementById('password').value;
+                        const btn = document.getElementById('submitBtn');
+                        const errorDiv = document.getElementById('errorMessage');
+
+                        btn.disabled = true;
+                        btn.textContent = 'Creating account...';
+                        errorDiv.style.display = 'none';
+
+                        try {
+                            const response = await fetch('/signup', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ email, username, password })
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok && data.success) {
+                                // Redirect to login
+                                window.location.href = '/login';
+                            } else {
+                                errorDiv.textContent = data.error || 'Signup failed. Please try again.';
+                                errorDiv.style.display = 'block';
+                                btn.disabled = false;
+                                btn.textContent = 'Start Practice';
+                            }
+                        } catch (error) {
+                            console.error('Signup error:', error);
+                            errorDiv.textContent = 'Network error. Please try again.';
+                            errorDiv.style.display = 'block';
+                            btn.disabled = false;
+                            btn.textContent = 'Start Practice';
+                        }
+                    }
+                </script>
+
+                <p class="alt-action">
+                    Already have an account? <a href="{{ url_for('login') }}">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

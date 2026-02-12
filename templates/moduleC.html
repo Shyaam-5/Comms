@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic Speaking - English Mastery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='module.css') }}?v=2">
+    <script>
+        // Immediate client-side auth check
+        if (!localStorage.getItem('email') || !localStorage.getItem('session_id')) {
+            window.location.href = '/login';
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Main module container -->
+    <div class="module-container-fullscreen">
+        <div class="content-wrapper">
+            <!-- Module title - top left -->
+            <h1 class="module-title-corner">Topic Speaking</h1>
+
+            <!-- Main content centered -->
+            <div class="center-content">
+                <!-- Topic display -->
+                <div class="topic-display-box">
+                    <p class="topic-prompt-text">
+                        Your Topic is "<span id="topicText" class="topic-highlight">favorite holiday</span>"
+                    </p>
+                </div>
+
+                <!-- Recording button -->
+                <div class="action-button-wrapper">
+                    <button id="recordBtn" class="primary-action-btn" onclick="toggleRecording()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                            <path
+                                d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                        </svg>
+                        <span id="recordText">Start Speaking</span>
+                    </button>
+                </div>
+
+                <!-- Timer and instruction -->
+                <div class="timer-section">
+                    <p id="timerDisplay" class="timer-text" style="display: none;">
+                        Time: <span id="timeRemaining">2:00</span>
+                    </p>
+                    <p class="tip-text-center">* Speak about the above topic for 2 minutes.</p>
+                </div>
+            </div>
+
+            <!-- Next button - bottom right corner -->
+            <button id="nextBtn" class="corner-next-btn" onclick="nextTopic()">
+                Next >>
+            </button>
+
+            <!-- Progress indicator - top right -->
+            <div id="progress-pill" class="progress-indicator" style="display: none;">
+                1/5
+            </div>
+
+            <!-- Results overlay -->
+            <div id="results" class="results-overlay" style="display: none;">
+                <div class="results-modal">
+                    <div class="results-header">
+                        <h2>Your Performance</h2>
+                    </div>
+
+                    <div class="score-display-large">
+                        <div class="score-ring">
+                            <span id="score" class="score-value">--</span>
+                            <span class="score-unit">%</span>
+                        </div>
+                    </div>
+
+                    <div class="results-content-grid">
+                        <!-- Side-by-side comparison -->
+                        <div class="comparison-grid">
+                            <div class="result-card target-card">
+                                <span class="card-label">Topic</span>
+                                <p id="topicResult" class="card-text">--</p>
+                            </div>
+                            <div class="result-card user-card">
+                                <span class="card-label">Your Speech</span>
+                                <p id="transcription" class="card-text">--</p>
+                            </div>
+                        </div>
+
+                        <!-- AI Feedback Section -->
+                        <div class="ai-feedback-section">
+                            <h3 class="feedback-header">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l5 5v-5h6c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H14.17L13 17.17V16H3V4h18v12z" />
+                                </svg>
+                                AI Analysis
+                            </h3>
+                            <div class="feedback-details">
+                                <div class="feedback-group strengths">
+                                    <span class="group-icon">✅</span>
+                                    <div class="group-content">
+                                        <span class="group-title">Strengths</span>
+                                        <ul id="strengthsList" class="feedback-list"></ul>
+                                    </div>
+                                </div>
+                                <div class="feedback-group improvements">
+                                    <span class="group-icon">💡</span>
+                                    <div class="group-content">
+                                        <span class="group-title">Improvements</span>
+                                        <ul id="improvementsList" class="feedback-list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="analysis" class="general-feedback">--</p>
+                        </div>
+                    </div>
+
+                    <button class="close-results-btn" onclick="closeResults()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='moduleC.js') }}"></script>
+</body>
+
+</html>

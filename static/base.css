@@ -1,0 +1,227 @@
+/* static/base.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary-blue: #6BA3C9;
+  --dark-blue: #4A8AB5;
+  --bg-light: #F5F5F5;
+  --text-dark: #2C3E50;
+  --text-light: #7F8C8D;
+  --white: #FFFFFF;
+  --border-color: #6BA3C9;
+  --input-border: #A8C5DA;
+  --shadow: rgba(107, 163, 201, 0.15);
+  --font-primary: 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Left panel with real wave image */
+.left-panel {
+  flex: 0 0 35%;
+  position: relative;
+  overflow: hidden;
+  background-color: #4A8AB5;
+  /* fallback color */
+}
+
+.wave-pattern {
+  width: 100%;
+  height: 100%;
+  background-image: url('/static/img/waves.jpg');
+  /* your image path */
+  background-size: cover;
+  /* fills the column */
+  background-position: center;
+  /* centers composition */
+  background-repeat: no-repeat;
+  filter: none;
+  /* keep image crisp */
+}
+
+/* Right panel with form */
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--white);
+  position: relative;
+}
+
+.decorative-circle {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  border: 2px solid rgba(107, 163, 201, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 460px;
+  z-index: 1;
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+  font-size: 1rem;
+  color: var(--text-light);
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.form-group {
+  margin-bottom: 1.8rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 0.6rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background-color: var(--white);
+  border: 2px solid var(--input-border);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: var(--font-primary);
+}
+
+.form-input::placeholder {
+  color: #B0BEC5;
+}
+
+.form-input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px var(--shadow);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--white);
+  background-color: var(--primary-blue);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover {
+  background-color: var(--dark-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.alt-action {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+.alt-action a {
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.alt-action a:hover {
+  color: var(--dark-blue);
+  text-decoration: underline;
+}
+
+.flash-messages {
+  margin-bottom: 1.5rem;
+}
+
+.flash {
+  padding: 0.9rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.flash.error {
+  background-color: #FFEBEE;
+  color: #C62828;
+  border-left: 4px solid #C62828;
+}
+
+.flash.success {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+  border-left: 4px solid #2E7D32;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .left-panel {
+    display: none;
+  }
+
+  .right-panel {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-title {
+    font-size: 2rem;
+  }
+
+  .form-container {
+    padding: 0 1rem;
+  }
+}
